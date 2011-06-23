@@ -1639,6 +1639,9 @@ tls_deauthenticate (struct tls_multi *multi)
     }
 }
 
+#ifndef INFO_CALLBACK_SSL_CONST
+#define INFO_CALLBACK_SSL_CONST const
+#endif
 /*
  * Print debugging information on SSL/TLS session negotiation.
  */
