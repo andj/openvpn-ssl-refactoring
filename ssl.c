@@ -1738,14 +1738,14 @@ is_hard_reset (int op, int key_method)
 /**
  * Initialize a \c key_state structure.
  * @ingroup control_processor
- * 
+ *
  * This function initializes a \c key_state structure associated with a \c
  * tls_session.  It sets up the structure's SSL-BIO, sets the object's \c
  * key_state.state to \c S_INITIAL, and sets the session ID and key ID two
  * appropriate values based on the \c tls_session's internal state.  It
  * also initializes a new set of structures for the \link reliable
  * Reliability Layer\endlink.
- * 
+ *
  * @param session      - A pointer to the \c tls_session structure
  *                       associated with the \a ks argument.
  * @param ks           - A pointer to the \c key_state structure to be
@@ -1817,11 +1817,11 @@ key_state_init (struct tls_session *session, struct key_state *ks)
 /**
  * Cleanup a \c key_state structure.
  * @ingroup control_processor
- * 
+ *
  * This function cleans up a \c key_state structure.  It frees the
  * associated SSL-BIO, and the structures allocated for the \link reliable
  * Reliability Layer\endlink.
- * 
+ *
  * @param ks           - A pointer to the \c key_state structure to be
  *                       cleaned up.
  * @param clear        - Whether the memory allocated for the \a ks object
@@ -3084,10 +3084,10 @@ push_peer_info(struct buffer *buf, struct tls_session *session)
 
       /* push mac addr */
       {
-	bool get_default_gateway_mac_addr (unsigned char *macaddr);
-	uint8_t macaddr[6];
-	get_default_gateway_mac_addr (macaddr);
-	buf_printf (&out, "IV_HWADDR=%s\n", format_hex_ex (macaddr, 6, 0, 1, ":", &gc));
+        bool get_default_gateway_mac_addr (unsigned char *macaddr);
+        uint8_t macaddr[6];
+        get_default_gateway_mac_addr (macaddr);
+        buf_printf (&out, "IV_HWADDR=%s\n", format_hex_ex (macaddr, 6, 0, 1, ":", &gc));
       }
 
       /* push LZO status */
@@ -3097,22 +3097,22 @@ push_peer_info(struct buffer *buf, struct tls_session *session)
 
       /* push env vars that begin with UV_ */
       for (e=es->list; e != NULL; e=e->next)
-	{
-	  if (e->string)
-	    {
-	      if (!strncmp(e->string, "UV_", 3) && buf_safe(&out, strlen(e->string)+1))
-		buf_printf (&out, "%s\n", e->string);
-	    }
-	}
+        {
+          if (e->string)
+            {
+              if (!strncmp(e->string, "UV_", 3) && buf_safe(&out, strlen(e->string)+1))
+                buf_printf (&out, "%s\n", e->string);
+            }
+        }
 
       if (!write_string(buf, BSTR(&out), -1))
-	goto error;
+        goto error;
     }
   else
 #endif
     {
       if (!write_empty_string (buf)) /* no peer info */
-	goto error;
+        goto error;
     }
   ret = true;
 
@@ -3163,7 +3163,7 @@ key_method_2_write (struct buffer *buf, struct tls_session *session)
       if (!write_empty_string (buf)) /* no username */
 	goto error;
       if (!write_empty_string (buf)) /* no password */
-	goto error;
+ 	goto error;
     }
 
   if (!push_peer_info (buf, session))
@@ -4776,7 +4776,7 @@ tls_send_payload (struct tls_multi *multi,
   else
     {
       if (!ks->paybuf)
-	ks->paybuf = buffer_list_new (0);
+        ks->paybuf = buffer_list_new (0);
       buffer_list_push_data (ks->paybuf, data, (size_t)size);
       ret = true;
     }
