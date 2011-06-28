@@ -2777,6 +2777,14 @@ key_state_soft_reset (struct tls_session *session)
  */
 
 static bool
+write_empty_string (struct buffer *buf)
+{
+  if (!buf_write_u16 (buf, 0))
+    return false;
+  return true;
+}
+
+static bool
 write_string (struct buffer *buf, const char *str, const int maxlen)
 {
   const int len = strlen (str) + 1;
@@ -2785,14 +2793,6 @@ write_string (struct buffer *buf, const char *str, const int maxlen)
   if (!buf_write_u16 (buf, len))
     return false;
   if (!buf_write (buf, str, len))
-    return false;
-  return true;
-}
-
-static bool
-write_empty_string (struct buffer *buf)
-{
-  if (!buf_write_u16 (buf, 0))
     return false;
   return true;
 }
