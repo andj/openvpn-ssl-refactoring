@@ -1989,7 +1989,6 @@ init_ssl (const struct options *options, struct tls_root_ctx *new_ctx)
   DH *dh;
   BIO *bio;
   bool using_cert_file = false;
-  X509 *my_cert = NULL;
 
   ASSERT(NULL != new_ctx);
 
@@ -2148,6 +2147,8 @@ init_ssl (const struct options *options, struct tls_root_ctx *new_ctx)
       else
 #endif
 	{
+	  X509 *my_cert = NULL;
+
 	  /* Load Certificate */
 	  if (options->cert_file)
 	    {
@@ -2176,6 +2177,8 @@ init_ssl (const struct options *options, struct tls_root_ctx *new_ctx)
 	      ASSERT (my_cert);
 	      if (!use_external_private_key(ctx, my_cert))
 		msg (M_SSLERR, "Cannot enable SSL external private key capability");
+	      if (my_cert)
+	        X509_free(my_cert);
 	    }
 	  else
 #endif
@@ -2338,17 +2341,13 @@ init_ssl (const struct options *options, struct tls_root_ctx *new_ctx)
 	msg (M_SSLERR, "Problem with cipher list: %s", options->cipher_list);
     }
 
- done:
   tls_clear_error ();
-
-  if (my_cert)
-    X509_free(my_cert);
-
   return;
 
  err:
+  tls_clear_error ();
   tls_ctx_free (new_ctx);
-  goto done;
+  return;
 }
 
 /*
