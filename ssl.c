@@ -340,22 +340,6 @@ ssl_put_auth_challenge (const char *cr_str)
 #endif
 
 /*
- * OpenSSL callback to get a temporary RSA key, mostly
- * used for export ciphers.
- */
-static RSA *
-tmp_rsa_cb (SSL * s, int is_export, int keylength)
-{
-  static RSA *rsa_tmp = NULL;
-  if (rsa_tmp == NULL)
-    {
-      msg (D_HANDSHAKE, "Generating temp (%d bit) RSA key", keylength);
-      rsa_tmp = RSA_generate_key (keylength, RSA_F4, NULL, NULL);
-    }
-  return (rsa_tmp);
-}
-
-/*
  * Cert hash functions
  */
 static void
@@ -1998,8 +1982,8 @@ use_inline_PrivateKey_file (SSL_CTX *ctx, const char *key_string)
  * Initialize SSL context.
  * All files are in PEM format.
  */
-SSL_CTX *
-init_ssl (const struct options *options)
+void
+init_ssl (const struct options *options, struct tls_root_ctx *new_ctx)
 {
   SSL_CTX *ctx = NULL;
   DH *dh;
@@ -2007,15 +1991,14 @@ init_ssl (const struct options *options)
   bool using_cert_file = false;
   X509 *my_cert = NULL;
 
-  ERR_clear_error ();
+  ASSERT(NULL != new_ctx);
+
+  tls_clear_error();
 
   if (options->tls_server)
     {
-      ctx = SSL_CTX_new (TLSv1_server_method ());
-      if (ctx == NULL)
-	msg (M_SSLERR, "SSL_CTX_new TLSv1_server_method");
-
-      SSL_CTX_set_tmp_rsa_callback (ctx, tmp_rsa_cb);
+      tls_ctx_server_new(new_ctx);
+      ctx = new_ctx->ctx;
 
 #if ENABLE_INLINE_FILES
       if (!strcmp (options->dh_file, INLINE_FILE_TAG) && options->dh_file_inline)
@@ -2043,9 +2026,8 @@ init_ssl (const struct options *options)
     }
   else				/* if client */
     {
-      ctx = SSL_CTX_new (TLSv1_client_method ());
-      if (ctx == NULL)
-	msg (M_SSLERR, "SSL_CTX_new TLSv1_client_method");
+      tls_ctx_client_new(new_ctx);
+      ctx = new_ctx->ctx;
     }
 
   /* Set SSL options */
@@ -2357,17 +2339,15 @@ init_ssl (const struct options *options)
     }
 
  done:
-  ERR_clear_error ();
+  tls_clear_error ();
+
   if (my_cert)
     X509_free(my_cert);
-  return ctx;
+
+  return;
 
  err:
-  if (ctx)
-    {
-      SSL_CTX_free (ctx);
-      ctx = NULL;
-    }
+  tls_ctx_free (new_ctx);
   goto done;
 }
 
