@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995-2001 Kungliga Tekniska Högskolan
+ * Copyright (c) 1995-2001 Kungliga Tekniska HÃ¶gskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
  * All rights reserved.
  *
@@ -43,7 +43,7 @@ static char base64_chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 int 
-base64_encode(const void *data, int size, char **str)
+openvpn_base64_encode(const void *data, int size, char **str)
 {
     char *s, *p;
     int i;
@@ -117,7 +117,7 @@ token_decode(const char *token)
 }
 
 int
-base64_decode(const char *str, void *data, int size)
+openvpn_base64_decode(const char *str, void *data, int size)
 {
     const char *p;
     unsigned char *q;
