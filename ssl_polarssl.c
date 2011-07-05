@@ -207,7 +207,7 @@ else
       msg (M_FATAL, "Cannot read DH parameters from file %s", dh_file);
   }
 
-  msg (D_TLS_DEBUG_LOW, "Diffie-Hellman initialized with %d bit key",
+  msg (D_TLS_DEBUG_LOW, "Diffie-Hellman initialized with %zd bit key",
       8 * mpi_size(&ctx->dhm_ctx->P));
 }
 
@@ -813,7 +813,7 @@ print_details (struct key_state_ssl * ks_ssl, const char *prefix)
   cert = ks_ssl->ctx->peer_cert;
   if (cert != NULL)
     {
-      openvpn_snprintf (s2, sizeof (s2), ", %d bit RSA", cert->rsa.len * 8);
+      openvpn_snprintf (s2, sizeof (s2), ", %zd bit RSA", cert->rsa.len * 8);
     }
 
   msg (D_HANDSHAKE, "%s%s", s1, s2);
