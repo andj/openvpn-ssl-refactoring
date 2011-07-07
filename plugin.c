@@ -379,8 +379,8 @@ plugin_call_item (const struct plugin *p,
 						    .current_cert_depth = (current_cert ? certdepth : -1),
 						    .current_cert = current_cert
 #else
-						    .current_cert_depth = -1,
-						    .current_cert = NULL
+						    .__current_cert_depth_disabled = -1,
+						    .__current_cert_disabled = NULL
 #endif
 						  };
         struct openvpn_plugin_args_func_return retargs;
